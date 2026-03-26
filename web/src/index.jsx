@@ -21,50 +21,60 @@ import { Autotune } from './pages/Autotune/index.jsx';
 import { ShotHistory } from './pages/ShotHistory/index.jsx';
 import { ShotAnalyzer } from './pages/ShotAnalyzer/index.jsx';
 import { StatisticsPage } from './pages/Statistics/index.jsx';
+import { DisplayUI } from './pages/DisplayUI/index.jsx';
 
 const apiService = new ApiService();
+
+function MainLayout() {
+  return (
+    <div className='bg-base-300 min-h-screen'>
+      <div className='flex min-h-screen flex-col'>
+        <Header />
+
+        <main className='flex-1'>
+          <div className='mx-auto w-full px-4 py-2 lg:p-8 xl:container'>
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-12'>
+              <Navigation />
+              <div className='lg:col-span-10'>
+                <ErrorBoundary>
+                  <Router>
+                    <Route path='/' component={Home} />
+                    <Route path='/profiles' component={ProfileList} />
+                    <Route path='/profiles/:id' component={ProfileEdit} />
+                    <Route path='/settings' component={Settings} />
+                    <Route path='/ota' component={OTA} />
+                    <Route path='/scales' component={Scales} />
+                    <Route path='/pidtune' component={Autotune} />
+                    <Route path='/history' component={ShotHistory} />
+                    <Route path='/analyzer' component={ShotAnalyzer} />
+                    <Route path='/statistics' component={StatisticsPage} />
+                    <Route
+                      path='/statistics/:sourceAlias/:profileName'
+                      component={StatisticsPage}
+                    />
+                    <Route path='/analyzer/:source/:id' component={ShotAnalyzer} />{' '}
+                    {/*deep-link route (sorce & ID)*/}
+                    <Route default component={NotFound} />
+                  </Router>
+                </ErrorBoundary>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    </div>
+  );
+}
 
 export function App() {
   return (
     <LocationProvider>
       <ApiServiceContext.Provider value={apiService}>
-        <div className='bg-base-300 min-h-screen'>
-          <div className='flex min-h-screen flex-col'>
-            <Header />
-
-            <main className='flex-1'>
-              <div className='mx-auto w-full px-4 py-2 lg:p-8 xl:container'>
-                <div className='grid grid-cols-1 gap-6 lg:grid-cols-12'>
-                  <Navigation />
-                  <div className='lg:col-span-10'>
-                    <ErrorBoundary>
-                      <Router>
-                        <Route path='/' component={Home} />
-                        <Route path='/profiles' component={ProfileList} />
-                        <Route path='/profiles/:id' component={ProfileEdit} />
-                        <Route path='/settings' component={Settings} />
-                        <Route path='/ota' component={OTA} />
-                        <Route path='/scales' component={Scales} />
-                        <Route path='/pidtune' component={Autotune} />
-                        <Route path='/history' component={ShotHistory} />
-                        <Route path='/analyzer' component={ShotAnalyzer} />
-                        <Route path='/statistics' component={StatisticsPage} />
-                        <Route
-                          path='/statistics/:sourceAlias/:profileName'
-                          component={StatisticsPage}
-                        />
-                        <Route path='/analyzer/:source/:id' component={ShotAnalyzer} />{' '}
-                        {/*deep-link route (sorce & ID)*/}
-                        <Route default component={NotFound} />
-                      </Router>
-                    </ErrorBoundary>
-                  </div>
-                </div>
-              </div>
-            </main>
-            <Footer />
-          </div>
-        </div>
+        <Router>
+          <Route path='/ui' component={DisplayUI} />
+          <Route default component={MainLayout} />
+        </Router>
       </ApiServiceContext.Provider>
     </LocationProvider>
   );
